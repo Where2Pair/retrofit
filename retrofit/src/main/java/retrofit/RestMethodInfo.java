@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import retrofit.http.Body;
 import retrofit.http.EncodedPath;
 import retrofit.http.EncodedQuery;
@@ -37,6 +38,7 @@ import retrofit.http.Multipart;
 import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.http.QueryParams;
 import retrofit.http.RestMethod;
 
 /** Request metadata about a service interface declaration. */
@@ -330,6 +332,9 @@ final class RestMethodInfo {
 
             paramNames[i] = name;
             paramUsage[i] = ParamUsage.ENCODED_QUERY;
+          } else if (annotationType == QueryParams.class) {
+              paramNames[i] = "REQUEST_PARAMS_PLACEHOLDER";
+              paramUsage[i] = ParamUsage.QUERY_PARAMS;
           } else if (annotationType == Header.class) {
             String name = ((Header) parameterAnnotation).value();
             if (parameterType != String.class) {

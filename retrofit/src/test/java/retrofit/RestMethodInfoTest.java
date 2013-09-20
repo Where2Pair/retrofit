@@ -1,7 +1,20 @@
 // Copyright 2013 Square, Inc.
 package retrofit;
 
-import com.google.gson.reflect.TypeToken;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
+import static retrofit.RestMethodInfo.ParamUsage.BODY;
+import static retrofit.RestMethodInfo.ParamUsage.ENCODED_PATH;
+import static retrofit.RestMethodInfo.ParamUsage.ENCODED_QUERY;
+import static retrofit.RestMethodInfo.ParamUsage.HEADER;
+import static retrofit.RestMethodInfo.ParamUsage.PATH;
+import static retrofit.RestMethodInfo.ParamUsage.QUERY;
+import static retrofit.RestMethodInfo.ParamUsage.QUERY_PARAMS;
+import static retrofit.RestMethodInfo.RequestType.MULTIPART;
+import static retrofit.RestMethodInfo.RequestType.SIMPLE;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
@@ -10,7 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Test;
+
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.EncodedPath;
@@ -28,22 +43,11 @@ import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.http.QueryParams;
 import retrofit.http.RestMethod;
 import retrofit.mime.TypedOutput;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-import static retrofit.RestMethodInfo.ParamUsage.BODY;
-import static retrofit.RestMethodInfo.ParamUsage.ENCODED_PATH;
-import static retrofit.RestMethodInfo.ParamUsage.ENCODED_QUERY;
-import static retrofit.RestMethodInfo.ParamUsage.HEADER;
-import static retrofit.RestMethodInfo.ParamUsage.PATH;
-import static retrofit.RestMethodInfo.ParamUsage.QUERY;
-import static retrofit.RestMethodInfo.ParamUsage.QUERY_PARAMS;
-import static retrofit.RestMethodInfo.RequestType.MULTIPART;
-import static retrofit.RestMethodInfo.RequestType.SIMPLE;
+import com.google.gson.reflect.TypeToken;
 
 public class RestMethodInfoTest {
   @Test public void pathParameterParsing() throws Exception {

@@ -37,5 +37,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(PARAMETER)
 @Retention(RUNTIME)
 public @interface QueryParams {
-  String value();
+
 }

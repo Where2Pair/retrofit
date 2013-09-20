@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import retrofit.client.Header;
 import retrofit.client.Request;
 import retrofit.converter.Converter;
@@ -193,6 +195,14 @@ final class RequestBuilder implements RequestInterceptor.RequestFacade {
         case ENCODED_QUERY:
           if (value != null) { // Skip null values.
             addEncodedQueryParam(name, value.toString());
+          }
+          break;
+        case QUERY_PARAMS:
+          if (value != null) { // Skip null values.
+            Map<String, ?> queryParams = (Map<String, ?>) value;
+            for(Map.Entry<String, ?> queryParam : queryParams.entrySet()) {
+            	addQueryParam(queryParam.getKey(), queryParam.getValue().toString());
+            }
           }
           break;
         case HEADER:

@@ -1,17 +1,33 @@
 // Copyright 2013 Square, Inc.
 package retrofit;
 
-import com.google.gson.Gson;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.fail;
+import static retrofit.RestMethodInfo.ParamUsage.BODY;
+import static retrofit.RestMethodInfo.ParamUsage.ENCODED_PATH;
+import static retrofit.RestMethodInfo.ParamUsage.ENCODED_QUERY;
+import static retrofit.RestMethodInfo.ParamUsage.FIELD;
+import static retrofit.RestMethodInfo.ParamUsage.HEADER;
+import static retrofit.RestMethodInfo.ParamUsage.PART;
+import static retrofit.RestMethodInfo.ParamUsage.PATH;
+import static retrofit.RestMethodInfo.ParamUsage.QUERY;
+import static retrofit.RestMethodInfo.ParamUsage.QUERY_PARAMS;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Test;
+
+import retrofit.RestMethodInfo.ParamUsage;
+import retrofit.RestMethodInfo.RequestType;
 import retrofit.client.Header;
 import retrofit.client.Request;
 import retrofit.converter.Converter;
@@ -21,18 +37,7 @@ import retrofit.mime.MultipartTypedOutput;
 import retrofit.mime.TypedOutput;
 import retrofit.mime.TypedString;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
-import static retrofit.RestMethodInfo.ParamUsage;
-import static retrofit.RestMethodInfo.ParamUsage.BODY;
-import static retrofit.RestMethodInfo.ParamUsage.ENCODED_PATH;
-import static retrofit.RestMethodInfo.ParamUsage.ENCODED_QUERY;
-import static retrofit.RestMethodInfo.ParamUsage.FIELD;
-import static retrofit.RestMethodInfo.ParamUsage.HEADER;
-import static retrofit.RestMethodInfo.ParamUsage.PART;
-import static retrofit.RestMethodInfo.ParamUsage.PATH;
-import static retrofit.RestMethodInfo.ParamUsage.QUERY;
-import static retrofit.RestMethodInfo.RequestType;
+import com.google.gson.Gson;
 
 public class RequestBuilderTest {
   @Test public void normalGet() throws Exception {
@@ -300,6 +305,24 @@ public class RequestBuilderTest {
     assertThat(request.getBody()).isNull();
   }
 
+  @Test public void getWithQueryParams() throws Exception {
+	Map<String, String> queryParams = new HashMap<String, String>();
+	queryParams.put("hi", "mom");
+	queryParams.put("bye", "moms_boyfriend");
+    Request request = new Helper() //
+        .setMethod("GET") //
+        .setUrl("http://example.com") //
+        .setPath("/foo/bar/") //
+        .addQueryParams(queryParams) //
+        .build();
+    assertThat(request.getMethod()).isEqualTo("GET");
+    assertThat(request.getHeaders()).isEmpty();
+    assertThat(request.getUrl()).startsWith("http://example.com/foo/bar/?");
+    assertThat(request.getUrl()).containsOnlyOnce("hi=mom");
+    assertThat(request.getUrl()).containsOnlyOnce("bye=moms_boyfriend");
+    assertThat(request.getBody()).isNull();
+  }
+  
   @Test public void normalPost() throws Exception {
     Request request = new Helper() //
         .setMethod("POST") //
@@ -595,7 +618,7 @@ public class RequestBuilderTest {
       return this;
     }
 
-    Helper setHasBody() {
+	Helper setHasBody() {
       hasBody = true;
       return this;
     }
@@ -643,6 +666,13 @@ public class RequestBuilderTest {
       return this;
     }
 
+    Helper addQueryParams(Map<String, ?> queryParams) {
+        paramNames.add("REQUEST_PARAMS_PLACEHOLDER");
+        paramUsages.add(QUERY_PARAMS);
+        args.add(queryParams);
+        return this;
+      }
+    
     Helper addField(String name, String value) {
       paramNames.add(name);
       paramUsages.add(FIELD);
