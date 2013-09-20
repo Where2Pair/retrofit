@@ -41,6 +41,7 @@ import static retrofit.RestMethodInfo.ParamUsage.ENCODED_QUERY;
 import static retrofit.RestMethodInfo.ParamUsage.HEADER;
 import static retrofit.RestMethodInfo.ParamUsage.PATH;
 import static retrofit.RestMethodInfo.ParamUsage.QUERY;
+import static retrofit.RestMethodInfo.ParamUsage.QUERY_PARAMS;
 import static retrofit.RestMethodInfo.RequestType.MULTIPART;
 import static retrofit.RestMethodInfo.RequestType.SIMPLE;
 
@@ -475,6 +476,22 @@ public class RestMethodInfoTest {
     assertThat(methodInfo.requestParamUsage).hasSize(1).containsExactly(ENCODED_QUERY);
     assertThat(methodInfo.requestType).isEqualTo(SIMPLE);
   }
+
+    @Test public void queryParams() {
+        class Example {
+            @GET("/") Response a(@QueryParams Map<String, ?> queryParams) {
+                return null;
+            }
+        }
+
+        Method method = TestingUtils.getMethod(Example.class, "a");
+        RestMethodInfo methodInfo = new RestMethodInfo(method);
+        methodInfo.init();
+
+        assertThat(methodInfo.requestParamNames).hasSize(1).containsExactly("REQUEST_PARAMS_PLACEHOLDER");
+        assertThat(methodInfo.requestParamUsage).hasSize(1).containsExactly(QUERY_PARAMS);
+        assertThat(methodInfo.requestType).isEqualTo(SIMPLE);
+    }
 
   @Test public void multipleQueryParams() {
     class Example {

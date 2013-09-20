@@ -47,7 +47,7 @@ final class RestMethodInfo {
   private static final Pattern PARAM_URL_REGEX = Pattern.compile("\\{(" + PARAM + ")\\}");
 
   enum ParamUsage {
-    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, FIELD, PART, BODY, HEADER
+    PATH, ENCODED_PATH, QUERY, ENCODED_QUERY, QUERY_PARAMS, FIELD, PART, BODY, HEADER
   }
 
   enum RequestType {
