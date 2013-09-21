@@ -200,8 +200,8 @@ final class RequestBuilder implements RequestInterceptor.RequestFacade {
         case QUERY_PARAMS:
           if (value != null) { // Skip null values.
             Map<String, ?> queryParams = (Map<String, ?>) value;
-            for(Map.Entry<String, ?> queryParam : queryParams.entrySet()) {
-            	addQueryParam(queryParam.getKey(), queryParam.getValue().toString());
+            for (Map.Entry<String, ?> queryParam : queryParams.entrySet()) {
+                addQueryParam(queryParam.getKey(), queryParam.getValue().toString());
             }
           }
           break;
